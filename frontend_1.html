@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head >
+
+<title>GPA Calculator</title>
+<link rel="stylesheet" href="Style.css">
+
+</head>
+<body lang="en">
+
+
+    <h1>GPA Calculator </h1>
+
+    <form id="gpaForm">
+        <table>
+          <tr id="course_row" >
+            <th>  <label for="courses">Courses Name:
+       <input id="courses" type="text" name="courses" placeholder="calc 101" maxlength="30">
+       </label>
+      </th>
+      <th>
+       <label for="hours">Hours:</label>
+       <input type="number" id="hours" name="hours"  min="1" max="10" required>
+      </th>
+      <th>
+       <label for="grade">Grade:</label>
+       <select name="grade" id="grade" required>
+         <option value="A+">A+</option>
+         <option value="A">A</option>
+         <option value="B+">B+</option>
+         <option value="B">B</option>
+         <option value="C+">C+</option>
+         <option value="C">C</option>
+         <option value="D+">D+</option>
+         <option value="D">D</option>
+         <option value="F">F</option>
+       </select>
+      </th>
+      </tr>
+
+      </table>
+      &nbsp;
+      <button type="button" class="addCourse" >Add more Courses</button>
+      &nbsp;
+    <input type="submit" alt="submit" value="submit">
+    </form>
+
+    <h3 id="gpa_result"></h3>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+      $(document).on('click', '.addCourse', function() {
+        $("table").append(`"<tr><th> <label for="courses">Courses Name:<input id="courses" type="text" name="courses" placeholder="calc 101" maxlength="30"> </label></th>  <th> <label for="hours">Hours:</label> <input type="number" id="hours" name="hours" min="1" max="10" required></th><th> <label for="grade">Grade:</label> <select name="grade" id="grade" required><option value="A+">A+</option> <option value="A">A</option>  <option value="B+">B+</option>   <option value="B">B</option>  <option value="C+">C+</option> <option value="C">C</option> <option value="D+">D+</option> <option value="D">D</option><option value="F">F</option></select></th> </tr>"`);
+      })
+      </script>
+
+      <script>
+
+        document.getElementById('gpaForm').addEventListener('submit', async function(event) {
+
+
+          event.preventDefault();
+
+            const formData = new FormData(this);
+              var object = {};
+              formData.forEach((value, key) => object[key] = value);
+              var json = JSON.stringify(object);
+
+
+            const response = await fetch('http://localhost:8000/calc-grade', {
+                method: 'POST',
+                body: json,
+                headers: {'content-type': 'application/x-www-form-urlencoded','Accept': 'application/json'} // 422 (Unprocessable Entity)
+            });
+
+            console.log(response);
+
+            const data = await response.json()
+            console.log(`Response from python ${data}`);
+
+            document.getElementById('gpa_result').innerText = data;
+        });
+        </script>
+</body>
+
+
+</html>
